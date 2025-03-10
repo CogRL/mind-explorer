@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="preload" href="css/styles.css" as="style">
+    <link rel="preload" href="css/mini-games.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" as="style">
+    <title>Mind Explorer</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="loading-content">
+            <h1>Mind Explorer</h1>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+            <p class="loading-text">Loading your mind journey...</p>
+        </div>
+    </div>
+
+    <div id="welcome-screen" class="screen hidden">
+        <div class="welcome-content">
+            <h1>Mind Explorer</h1>
+            <p>Discover the depths of your intelligence, creativity, and personality</p>
+            <div class="mode-selection">
+                <button id="quick-mode" class="mode-btn">
+                    <span class="mode-title">Quick Reading</span>
+                    <span class="mode-desc">10 questions • 5 minutes</span>
+                </button>
+                <button id="deep-mode" class="mode-btn">
+                    <span class="mode-title">In-Depth Reading</span>
+                    <span class="mode-desc">50 questions • 25 minutes</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-screen" class="screen hidden">
+        <div id="three-container"></div>
+        <div class="overlay">
+            <div class="top-bar">
+                <div class="question-counter">
+                    <span id="current-question">1</span>/<span id="total-questions">10</span>
+                </div>
+                <div id="timer" class="timer hidden">
+                    <span id="timer-value">30</span>s
+                </div>
+            </div>
+            <div class="question-container">
+                <h2 id="question-text">Question text will appear here...</h2>
+                <div id="answer-options" class="answer-options">
+                    <!-- Answer options will be generated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="results-screen" class="screen hidden">
+        <div class="results-content">
+            <h1>Your Mind Profile</h1>
+            <div class="profile-sections">
+                <div class="profile-section">
+                    <h2>Intelligence</h2>
+                    <div class="score-bar">
+                        <div id="intelligence-score" class="score-fill"></div>
+                    </div>
+                    <div id="intelligence-details" class="details-container"></div>
+                </div>
+                <div class="profile-section">
+                    <h2>Creativity</h2>
+                    <div class="score-bar">
+                        <div id="creativity-score" class="score-fill"></div>
+                    </div>
+                    <div id="creativity-details" class="details-container"></div>
+                </div>
+                <div class="profile-section">
+                    <h2>Personality</h2>
+                    <div id="personality-traits" class="traits-container"></div>
+                </div>
+            </div>
+            <button id="restart-btn" class="btn">Explore Again</button>
+            <button id="share-btn" class="btn">Share Results</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/questions.js"></script>
+    <script src="js/results.js"></script>
+    <script src="js/three-scene.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
