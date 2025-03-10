@@ -9,15 +9,46 @@ class MindExplorer {
         this.resultsAnalyzer = new ResultsAnalyzer();
         this.resultsVisualizer = new ResultsVisualizer('results-screen');
         
-        // Audio setup
-        this.sounds = {
-            click: new Audio('sounds/click.mp3'),
-            transition: new Audio('sounds/transition.mp3'),
-            complete: new Audio('sounds/complete.mp3')
-        };
-
+        // Audio setup - with error handling for missing sound files
+        this.sounds = {};
+        this.initSounds();
+        
         this.initializeEventListeners();
         this.showLoadingScreen();
+    }
+    
+    // Initialize sounds with error handling
+    initSounds() {
+        const soundFiles = [
+            'click', 'transition', 'complete', 
+            'intelligence', 'creativity', 'personality',
+            'correct', 'incorrect', 'timeout'
+        ];
+        
+        soundFiles.forEach(sound => {
+            this.sounds[sound] = new Audio(`sounds/${sound}.mp3`);
+            
+            // Add error handling for missing sound files
+            this.sounds[sound].addEventListener('error', () => {
+                console.log(`Sound file ${sound}.mp3 failed to load - continuing without sound`);
+            });
+        });
+    }
+    
+    // Play sound with fallback if file is missing
+    playSound(soundName) {
+        try {
+            if (this.sounds[soundName]) {
+                // Create a clone to allow overlapping sounds
+                const sound = this.sounds[soundName].cloneNode();
+                sound.volume = 0.5; // Lower volume for better user experience
+                sound.play().catch(err => {
+                    console.log(`Error playing sound ${soundName}: ${err.message}`);
+                });
+            }
+        } catch (err) {
+            console.log(`Error with sound ${soundName}: ${err.message}`);
+        }
     }
 
     initializeEventListeners() {
@@ -56,7 +87,7 @@ class MindExplorer {
     }
 
     startGame(mode) {
-        this.sounds.click.play();
+        this.playSound('click');
         this.questionManager = new QuestionManager(mode);
         
         document.getElementById('welcome-screen').classList.add('hidden');
@@ -119,7 +150,7 @@ class MindExplorer {
 
     handleAnswer(answer) {
         clearInterval(this.timerInterval);
-        this.sounds.click.play();
+        this.playSound('click');
 
         const result = this.questionManager.submitAnswer(answer);
         
@@ -134,13 +165,13 @@ class MindExplorer {
             this.showResults();
         } else {
             this.questionManager.nextQuestion();
-            this.sounds.transition.play();
+            this.playSound('transition');
             this.displayQuestion();
         }
     }
 
     showResults() {
-        this.sounds.complete.play();
+        this.playSound('complete');
         
         document.getElementById('game-screen').classList.add('hidden');
         document.getElementById('results-screen').classList.remove('hidden');
@@ -150,7 +181,7 @@ class MindExplorer {
     }
 
     restart() {
-        this.sounds.click.play();
+        this.playSound('click');
         document.getElementById('results-screen').classList.add('hidden');
         document.getElementById('welcome-screen').classList.remove('hidden');
         

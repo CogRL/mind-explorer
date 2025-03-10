@@ -8,15 +8,34 @@ const QuestionType = {
     PERSONALITY: 'personality'
 };
 
-// Sound effects for different question types
-const QuestionSounds = {
-    intelligence: new Audio('sounds/intelligence.mp3'),
-    creativity: new Audio('sounds/creativity.mp3'),
-    personality: new Audio('sounds/personality.mp3'),
-    correct: new Audio('sounds/correct.mp3'),
-    incorrect: new Audio('sounds/incorrect.mp3'),
-    timeout: new Audio('sounds/timeout.mp3')
-};
+// Sound effects with error handling
+const QuestionSounds = {};
+function initQuestionSounds() {
+    const soundTypes = ['intelligence', 'creativity', 'personality', 'correct', 'incorrect', 'timeout'];
+    
+    soundTypes.forEach(type => {
+        QuestionSounds[type] = new Audio(`sounds/${type}.mp3`);
+        
+        // Add error handling
+        QuestionSounds[type].addEventListener('error', () => {
+            console.log(`Sound file ${type}.mp3 failed to load - continuing without sound`);
+        });
+    });
+}
+initQuestionSounds();
+
+// Helper function to play sounds safely
+function playQuestionSound(soundType) {
+    try {
+        if (QuestionSounds[soundType]) {
+            QuestionSounds[soundType].play().catch(err => {
+                console.log(`Error playing sound ${soundType}: ${err.message}`);
+            });
+        }
+    } catch (err) {
+        console.log(`Error with sound ${soundType}: ${err.message}`);
+    }
+}
 
 // Quick Assessment Questions (10 questions)
 const quickAssessmentQuestions = [
@@ -29,7 +48,7 @@ const quickAssessmentQuestions = [
             { text: "Observe people from a distance before engaging", impact: { extraversion: -1, analytical: 2 } }
         ],
         visualMood: "social",
-        sound: QuestionSounds.personality
+        sound: 'personality'
     },
     {
         text: "You encounter an abstract artwork that everyone's praising, but you don't understand it. Your reaction?",
@@ -40,7 +59,7 @@ const quickAssessmentQuestions = [
             { text: "Spend time with it, trying to form your own interpretation", impact: { openness: 3, creativity: 2 } }
         ],
         visualMood: "artistic",
-        sound: QuestionSounds.creativity
+        sound: 'creativity'
     },
     {
         text: "You're given a complex puzzle with no instructions. How do you approach it?",
@@ -54,7 +73,7 @@ const quickAssessmentQuestions = [
         timed: true,
         timeLimit: 20,
         type: "cognitive",
-        sound: QuestionSounds.intelligence
+        sound: 'intelligence'
     },
     {
         text: "You have 30 seconds to solve this sequence: 2, 3, 5, 8, 12, ?",
@@ -68,7 +87,7 @@ const quickAssessmentQuestions = [
         timed: true,
         timeLimit: 30,
         type: "cognitive",
-        sound: QuestionSounds.intelligence
+        sound: 'intelligence'
     },
     {
         text: "Which scenario would make you feel most fulfilled?",
@@ -79,7 +98,7 @@ const quickAssessmentQuestions = [
             { text: "Having the freedom to explore and learn without constraints", impact: { openness: 3, extraversion: 1 } }
         ],
         visualMood: "dream",
-        sound: QuestionSounds.personality
+        sound: 'personality'
     },
     {
         text: "When faced with a controversial topic, you tend to:",
@@ -90,7 +109,7 @@ const quickAssessmentQuestions = [
             { text: "Find unique angles that others might have missed", impact: { creativity: 3, openness: 2 } }
         ],
         visualMood: "conflict",
-        sound: QuestionSounds.personality
+        sound: 'personality'
     },
     {
         text: "Solve this visual puzzle: If two squares overlap to form a rectangle where 1/4 of each square is in the overlap, what fraction of the combined area is the overlap?",
@@ -104,7 +123,7 @@ const quickAssessmentQuestions = [
         timed: true,
         timeLimit: 30,
         type: "cognitive",
-        sound: QuestionSounds.intelligence
+        sound: 'intelligence'
     },
     {
         text: "What does consciousness mean to you?",
@@ -116,7 +135,7 @@ const quickAssessmentQuestions = [
         ],
         visualMood: "dream",
         type: "philosophical",
-        sound: QuestionSounds.personality
+        sound: 'personality'
     },
     {
         text: "What's your approach to understanding your own emotions?",
@@ -127,7 +146,7 @@ const quickAssessmentQuestions = [
             { text: "Discuss them with trusted people to gain perspective", impact: { extraversion: 2, agreeableness: 2 } }
         ],
         visualMood: "dream",
-        sound: QuestionSounds.personality
+        sound: 'personality'
     },
     {
         text: "Given this ethical dilemma: 'You can save five people by sacrificing one.' Your first instinct is to:",
@@ -139,7 +158,7 @@ const quickAssessmentQuestions = [
         ],
         visualMood: "conflict",
         type: "ethical",
-        sound: QuestionSounds.personality
+        sound: 'personality'
     }
 ];
 
@@ -157,7 +176,7 @@ const standardAssessmentQuestions = [
             { text: "Find creative solutions that might turn the mistake into an opportunity", impact: { creativity: 3, openness: 2 } }
         ],
         visualMood: "work",
-        sound: QuestionSounds.personality
+        sound: 'personality'
     },
     // ... [Continue adding all standard assessment questions]
 ];
@@ -177,7 +196,7 @@ const inDepthAssessmentQuestions = [
         ],
         visualMood: "puzzle",
         type: "philosophical",
-        sound: QuestionSounds.intelligence
+        sound: 'intelligence'
     },
     {
         text: "You have 45 seconds to mentally rotate this 3D shape and determine how many faces it has: a truncated icosahedron (like a soccer ball).",
@@ -191,7 +210,7 @@ const inDepthAssessmentQuestions = [
         timed: true,
         timeLimit: 45,
         type: "cognitive",
-        sound: QuestionSounds.intelligence
+        sound: 'intelligence'
     },
     // ... [Continue adding all in-depth questions]
 ];
@@ -456,18 +475,18 @@ const mindExplorerQuestions = [
     },
     {
         id: "me17",
-        text: "In a world where emotions can be quantified and shared, what would you explore first?",
+        text: "In a world where time flows backwards, how would you adapt your decision-making process?",
         options: [
-            "The relationship between emotion and decision-making",
-            "Patterns of emotional contagion in groups",
-            "Individual differences in emotional processing",
-            "The evolution of collective emotional states"
+            "Focus on understanding consequences before actions",
+            "Develop new frameworks for cause and effect",
+            "Use different types of signals for each direction",
+            "Create detailed maps of future-to-past connections"
         ],
-        type: "social",
+        type: "abstract",
         weight: {
-            emotional: 4,
+            adaptability: 4,
             analytical: 3,
-            systematic: 4
+            creativity: 4
         }
     },
     {
@@ -1979,7 +1998,7 @@ const mindExplorerQuestions = [
             "Create self-modifying concept structures",
             "Develop idea evolution algorithms",
             "Build transcendent pattern generators",
-            "Implement cognitive expansion protocols"
+            "Implement recursive pattern growth"
         ],
         type: "innovation",
         weight: {
