@@ -15,6 +15,12 @@ export class QuestionManager {
         this.currentIndex = 0;
         this.questions = [];
         this.miniGameManager = new MiniGameManager();
+        this.answers = [];
+        this.results = {
+            intelligence: 0,
+            creativity: 0,
+            personality: []
+        };
     }
     
     initializeQuestions() {
@@ -45,6 +51,46 @@ export class QuestionManager {
     
     getQuestions() {
         return this.questions;
+    }
+
+    async nextQuestion() {
+        if (this.currentIndex < this.questions.length - 1) {
+            this.currentIndex++;
+            return true;
+        }
+        return false;
+    }
+
+    async startMiniGame() {
+        const currentQuestion = this.getCurrentQuestion();
+        if (currentQuestion.miniGame) {
+            return await this.miniGameManager.startGame(currentQuestion.miniGame);
+        }
+        return null;
+    }
+
+    submitAnswer(answer) {
+        const currentQuestion = this.getCurrentQuestion();
+        this.answers[this.currentIndex] = answer;
+        
+        // Update results based on question type
+        if (currentQuestion.type === QuestionType.INTELLIGENCE) {
+            if (answer === currentQuestion.correctAnswer) {
+                this.results.intelligence++;
+            }
+        } else if (currentQuestion.type === QuestionType.CREATIVITY) {
+            this.results.creativity += this.evaluateCreativity(answer);
+        } else if (currentQuestion.type === QuestionType.PERSONALITY) {
+            this.results.personality.push(this.evaluatePersonality(answer));
+        }
+    }
+
+    getResults() {
+        return {
+            intelligence: (this.results.intelligence / this.getTotalIntelligenceQuestions()) * 100,
+            creativity: (this.results.creativity / this.getTotalCreativityQuestions()) * 100,
+            personality: this.aggregatePersonalityTraits()
+        };
     }
 }
 
@@ -2701,110 +2747,6 @@ function shuffleArray(array) {
         [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
     return newArray;
-}
-
-// Class definition
-class QuestionManager {
-    constructor() {
-        this.questions = mindExplorerQuestions;
-        this.currentIndex = 0;
-        this.scores = {
-            intelligence: 0,
-            creativity: 0,
-            personality: 0,
-            miniGames: {
-                reactionTime: 0,
-                patternMemory: 0,
-                numberSequence: 0,
-                spatialPuzzle: 0
-            }
-        };
-        this.miniGameManager = new MiniGameManager();
-        this.miniGameInterval = 3; // Show mini-game every 3 questions
-        this.lastMiniGameType = null;
-    }
-
-    getCurrentQuestion() {
-        return this.questions[this.currentIndex];
-    }
-
-    async nextQuestion() {
-        this.currentIndex++;
-        
-        // Check if it's time for a mini-game
-        if (this.currentIndex % this.miniGameInterval === 0) {
-            await this.startMiniGame();
-        }
-        
-        return this.getCurrentQuestion();
-    }
-
-    async startMiniGame() {
-        // Select a mini-game type that wasn't played last
-        let availableTypes = ['reactionTime', 'patternMemory', 'numberSequence', 'spatialPuzzle'];
-        if (this.lastMiniGameType) {
-            availableTypes = availableTypes.filter(type => type !== this.lastMiniGameType);
-        }
-        const gameType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
-        this.lastMiniGameType = gameType;
-
-        // Create transition effect
-        const overlay = document.createElement('div');
-        overlay.className = 'game-transition-overlay';
-        document.body.appendChild(overlay);
-
-        // Wait for transition
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // Initialize and start the mini-game
-        return new Promise(resolve => {
-            this.miniGameManager.initializeGame(gameType, document.querySelector('.question-container'), (score) => {
-                this.scores.miniGames[gameType] = score;
-                
-                // Remove transition overlay
-                overlay.addEventListener('transitionend', () => {
-                    overlay.remove();
-                });
-                overlay.style.opacity = '0';
-                
-                resolve();
-            });
-        });
-    }
-
-    submitAnswer(answer) {
-        const question = this.getCurrentQuestion();
-        let score = 0;
-
-        if (question.type === 'intelligence' && question.correct === answer) {
-            score = 100;
-        } else if (question.type === 'creativity') {
-            score = this.evaluateCreativeAnswer(answer, question.weight);
-        } else if (question.type === 'personality') {
-            score = this.evaluatePersonalityAnswer(answer, question.weight);
-        }
-
-        this.scores[question.type] += score;
-        return score;
-    }
-
-    getResults() {
-        const totalQuestions = {
-            intelligence: this.questions.filter(q => q.type === 'intelligence').length,
-            creativity: this.questions.filter(q => q.type === 'creativity').length,
-            personality: this.questions.filter(q => q.type === 'personality').length
-        };
-
-        return {
-            intelligence: (this.scores.intelligence / totalQuestions.intelligence),
-            creativity: (this.scores.creativity / totalQuestions.creativity),
-            personality: (this.scores.personality / totalQuestions.personality),
-            miniGames: this.scores.miniGames,
-            cognitiveProfile: this.generateCognitiveProfile()
-        };
-    }
-
-    // ... existing code ...
 }
 
 // Add transition styles to the CSS
