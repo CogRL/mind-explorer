@@ -1,3 +1,6 @@
+// Import statements must be at the top of the file
+import { MiniGameManager } from './mini-games.js';
+
 // Question Types
 const QuestionType = {
     INTELLIGENCE: 'intelligence',
@@ -249,7 +252,7 @@ const mindExplorerQuestions = [
         options: [
             "Focus on understanding consequences before actions",
             "Develop new frameworks for cause and effect",
-            "Rely more on intuition and pattern recognition",
+            "Use different types of signals for each direction",
             "Create detailed maps of future-to-past connections"
         ],
         type: "abstract",
@@ -1172,20 +1175,20 @@ const mindExplorerQuestions = [
     },
     {
         id: "me61",
-        text: "In a sequence where each shape is reflected and rotated: ⌞, ⌝, ⌟, ⌜, what comes next?",
+        text: "In a sequence where each shape is reflected and rotated: ◢◣◤, what comes next?",
         options: [
-            "⌞",
-            "⌝",
-            "⌟",
-            "⌜"
+            "◥",
+            "◢",
+            "◣",
+            "◤"
         ],
         type: "intelligence",
         weight: {
             pattern_recognition: 5,
             spatial: 4,
-            sequential: 4
+            logical: 4
         },
-        correct: "⌞"
+        correct: "◥"
     },
     {
         id: "me62",
@@ -2329,51 +2332,54 @@ const extendedQuestions = [
     },
     {
         id: "me182",
-        text: "If you could design emotional fractals, what would they reveal?",
+        text: "If you fold this pattern: ▢→△→○, what shape would be in the middle?",
         options: [
-            "Self-similar feeling patterns",
-            "Nested emotional complexity",
-            "Recursive empathy structures",
-            "Infinite affect iterations"
+            "△",
+            "▢",
+            "○",
+            "None of these"
         ],
-        type: "emotional",
+        type: "intelligence",
         weight: {
-            emotional: 5,
-            pattern: 4,
-            creativity: 3
-        }
+            spatial: 5,
+            visualization: 4,
+            logical: 4
+        },
+        correct: "△"
     },
     {
         id: "me183",
-        text: "How would you create a map of potential futures that includes quantum possibilities?",
+        text: "When these shapes overlap: ○ ◇ □, what's the minimum number of regions created?",
         options: [
-            "Design probability wave charts",
-            "Build timeline superposition models",
-            "Create possibility field matrices",
-            "Develop quantum path networks"
+            "4",
+            "6",
+            "7",
+            "8"
         ],
-        type: "systems",
+        type: "intelligence",
         weight: {
-            systematic: 5,
-            innovation: 4,
-            abstract: 3
-        }
+            spatial: 5,
+            analytical: 4,
+            logical: 4
+        },
+        correct: "7"
     },
     {
         id: "me184",
-        text: "When personality traits interact like chemical elements, what compounds form?",
+        text: "If ▲ casts a shadow when light comes from the left, and ◆ from the right, what's the shadow pattern of ▲◆?",
         options: [
-            "Adaptive behavior alloys",
-            "Character trait crystals",
-            "Identity molecule chains",
-            "Psychological compounds"
+            "Two overlapping shadows",
+            "One continuous shadow",
+            "Two separate shadows",
+            "No shadow in the middle"
         ],
-        type: "personality",
+        type: "intelligence",
         weight: {
-            personality: 5,
-            creativity: 4,
-            systematic: 3
-        }
+            spatial: 5,
+            visualization: 4,
+            logical: 4
+        },
+        correct: "Two separate shadows"
     },
     {
         id: "me185",
@@ -2648,24 +2654,21 @@ const allQuestions = [
 console.assert(allQuestions.length >= 100, `Not enough questions: ${allQuestions.length}/100`);
 
 // Question selection functions
-const getRandomQuestions = (count, excludeQuestions = []) => {
+function getRandomQuestions(count, excludeQuestions = []) {
     const availableQuestions = allQuestions.filter(q => !excludeQuestions.includes(q));
     return shuffleArray(availableQuestions).slice(0, count);
-};
+}
 
-const shuffleArray = (array) => {
+function shuffleArray(array) {
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
     return newArray;
-};
+}
 
-import { MiniGameManager } from './mini-games.js';
-
-// ... existing code ...
-
+// Class definition
 class QuestionManager {
     constructor() {
         this.questions = mindExplorerQuestions;
@@ -2803,6 +2806,6 @@ transitionStyles.textContent = `
     }
 `;
 document.head.appendChild(transitionStyles);
-// ... existing code ...
 
-export { QuestionManager, QuestionType, QuestionSounds }; 
+// Export what needs to be used by other modules
+export { QuestionManager, QuestionType };

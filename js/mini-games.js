@@ -43,7 +43,7 @@ export class MiniGameManager {
     }
 }
 
-class ReactionTimeGame {
+export class ReactionTimeGame {
     constructor() {
         this.title = "Lightning Reflexes";
         this.instructions = "When the screen turns green, click as fast as you can! But be careful - clicking too early will reset the test. We'll take your best time out of 5 attempts.";
@@ -233,7 +233,7 @@ class ReactionTimeGame {
     }
 }
 
-class PatternMemoryGame {
+export class PatternMemoryGame {
     constructor() {
         this.title = "Pattern Memory";
         this.instructions = "Watch the pattern of highlighted squares and repeat it in order. Each successful round adds one more step. Reach level 20 to achieve legendary status!";
@@ -505,7 +505,7 @@ class PatternMemoryGame {
     }
 }
 
-class NumberSequenceGame {
+export class NumberSequenceGame {
     constructor() {
         this.title = "Number Sequence";
         this.instructions = "Find the missing number in the sequence. Type your answer and press Enter!";
@@ -545,7 +545,7 @@ class NumberSequenceGame {
     }
 }
 
-class SpatialPuzzleGame {
+export class SpatialPuzzleGame {
     constructor() {
         this.title = "Spatial Puzzle";
         this.instructions = "Rotate the shapes to match the target pattern. Click to rotate pieces!";
@@ -596,4 +596,4 @@ class SpatialPuzzleGame {
             }, 1000);
         }
     }
-} 
+}
