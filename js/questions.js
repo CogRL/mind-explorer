@@ -1,5 +1,6 @@
 // Import statements must be at the top of the file
 import { MiniGameManager } from './mini-games.js';
+import soundEngine from './sound-engine.js';
 
 // Question Types
 const QuestionType = {
@@ -8,33 +9,48 @@ const QuestionType = {
     PERSONALITY: 'personality'
 };
 
-// Sound effects with error handling
-const QuestionSounds = {};
-function initQuestionSounds() {
-    const soundTypes = ['intelligence', 'creativity', 'personality', 'correct', 'incorrect', 'timeout'];
+// Initialize question manager class
+export class QuestionManager {
+    constructor() {
+        this.currentIndex = 0;
+        this.questions = [];
+        this.miniGameManager = new MiniGameManager();
+    }
     
-    soundTypes.forEach(type => {
-        QuestionSounds[type] = new Audio(`sounds/${type}.mp3`);
-        
-        // Add error handling
-        QuestionSounds[type].addEventListener('error', () => {
-            console.log(`Sound file ${type}.mp3 failed to load - continuing without sound`);
-        });
-    });
+    initializeQuestions() {
+        // Combine quick assessment questions for now
+        this.questions = [...quickAssessmentQuestions];
+        this.currentIndex = 0;
+    }
+    
+    getQuestion(index) {
+        return this.questions[index];
+    }
+    
+    getCurrentQuestion() {
+        return this.questions[this.currentIndex];
+    }
+    
+    getCurrentIndex() {
+        return this.currentIndex;
+    }
+    
+    setCurrentIndex(index) {
+        this.currentIndex = index;
+    }
+    
+    getTotalQuestions() {
+        return this.questions.length;
+    }
+    
+    getQuestions() {
+        return this.questions;
+    }
 }
-initQuestionSounds();
 
 // Helper function to play sounds safely
 function playQuestionSound(soundType) {
-    try {
-        if (QuestionSounds[soundType]) {
-            QuestionSounds[soundType].play().catch(err => {
-                console.log(`Error playing sound ${soundType}: ${err.message}`);
-            });
-        }
-    } catch (err) {
-        console.log(`Error with sound ${soundType}: ${err.message}`);
-    }
+    soundEngine.play(soundType);
 }
 
 // Quick Assessment Questions (10 questions)
@@ -116,8 +132,8 @@ const quickAssessmentQuestions = [
         options: [
             { text: "1/7 (I drew it out and calculated the areas)", impact: { analytical: 3, conscientiousness: 2 }, reasoning: "Systematic spatial calculation" },
             { text: "1/7 (I visualized it in my mind and estimated)", impact: { creativity: 2, openness: 2 }, reasoning: "Visual-spatial reasoning" },
-            { text: "I'd need to work through this step-by-step with paper", impact: { conscientiousness: 2, analytical: 1 }, reasoning: "Methodical approach preference" },
-            { text: "This isn't my strength, I'd ask someone who's good with spatial puzzles", impact: { agreeableness: 2, extraversion: 1 }, reasoning: "Collaborative problem-solving", isTimeoutDefault: true }
+            { text: "I'd need to work through this step-by-step with paper", impact: { conscientiousness: 2, analytical: 1 }, reasoning: "Thoroughness preference" },
+            { text: "I find it difficult to mentally manipulate complex 3D shapes", impact: { neuroticism: 1, creativity: 1 }, reasoning: "Visual-spatial challenge", isTimeoutDefault: true }
         ],
         visualMood: "puzzle",
         timed: true,
@@ -1551,18 +1567,18 @@ const mindExplorerQuestions = [
     },
     {
         id: "me83",
-        text: "How would you create a system that can evolve without losing its core functionality?",
+        text: "How would you create a system that evolves its own goals?",
         options: [
-            "Maintain essential patterns while allowing variation",
-            "Create modular evolution frameworks",
-            "Implement controlled adaptation mechanisms",
-            "Design stable core with flexible periphery"
+            "Create adaptive purpose generators",
+            "Implement goal mutation algorithms",
+            "Develop objective evolution frameworks",
+            "Build purpose synthesis engines"
         ],
         type: "systems",
         weight: {
             systematic: 5,
             innovation: 4,
-            stability: 4
+            creativity: 4
         }
     },
     {
@@ -1652,7 +1668,7 @@ const mindExplorerQuestions = [
             "Create conceptual elevation mechanisms",
             "Build abstraction layer interfaces",
             "Develop semantic zoom capabilities",
-            "Implement context-shifting protocols"
+            "Implement recursive pattern growth"
         ],
         type: "abstract",
         weight: {
@@ -1695,18 +1711,18 @@ const mindExplorerQuestions = [
     },
     {
         id: "me92",
-        text: "If consciousness were a geometric shape, what properties would it have?",
+        text: "If consciousness could be programmed like software, what would be its core algorithm?",
         options: [
-            "Multiple intersecting dimensions",
-            "Self-referential recursive patterns",
-            "Dynamic boundary conditions",
-            "Infinite internal complexity"
+            "Self-awareness recursion",
+            "Experience integration loops",
+            "Meaning generation processes",
+            "Reality modeling systems"
         ],
-        type: "abstract",
+        type: "innovation",
         weight: {
-            abstract: 5,
-            creativity: 4,
-            conceptual: 4
+            innovation: 5,
+            abstract: 4,
+            systematic: 4
         }
     },
     {
